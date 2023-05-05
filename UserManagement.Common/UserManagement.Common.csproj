@@ -7,9 +7,4 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
-    <ItemGroup>
-      <Folder Include="DTO\" />
-      <Folder Include="Interfaces\" />
-    </ItemGroup>
-
 </Project>

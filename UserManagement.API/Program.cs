@@ -1,11 +1,15 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 using UserManagement.BLL.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opts => {
+    var enumConverter = new JsonStringEnumConverter();
+    opts.JsonSerializerOptions.Converters.Add(enumConverter);
+});
 builder.Services.AddBllDependencies();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

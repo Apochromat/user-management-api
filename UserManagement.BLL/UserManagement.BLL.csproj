@@ -8,8 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Extensions\" />
       <Folder Include="Services\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\UserManagement.Common\UserManagement.Common.csproj" />
+      <ProjectReference Include="..\UserManagement.DAL\UserManagement.DAL.csproj" />
     </ItemGroup>
 
 </Project>

@@ -23,8 +23,8 @@ public class UserController : ControllerBase {
     /// </summary>
     /// <returns></returns>
     [HttpPost]
-    [Route("user")]
-    public async Task<ActionResult> CreateUser() {
+    [Route("register")]
+    public async Task<ActionResult> Register() {
         return Ok();
     }
     

@@ -1,27 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UserManagement.BLL.Services;
 using UserManagement.Common.Interfaces;
 using UserManagement.DAL;
 using UserManagement.DAL.Entities;
 
-namespace UserManagement.BLL.Extensions; 
+namespace UnitTests; 
 
-/// <summary>
-/// Extension for adding dependencies
-/// </summary>
-public static class ServiceDependencyExtension {
-    /// <summary>
-    /// Add business logic layer dependencies
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="configuration"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddBllDependencies(this IServiceCollection services, IConfiguration configuration) {
+public class Startup {
+    public void ConfigureServices(IServiceCollection services)
+    {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql("Host=localhost;Database=test-user-management-db;Username=postgres;Password=postgres"));
         services.AddIdentity<User, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders()
@@ -29,6 +20,5 @@ public static class ServiceDependencyExtension {
             .AddUserManager<UserManager<User>>()
             .AddRoleManager<RoleManager<IdentityRole<Guid>>>();
         services.AddScoped<IUserService, UserService>();
-        return services;
     }
 }

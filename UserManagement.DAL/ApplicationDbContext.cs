@@ -11,7 +11,6 @@ namespace UserManagement.DAL;
 /// </summary>
 public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid, IdentityUserClaim<Guid>,
     IdentityUserRole<Guid>, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, IdentityUserToken<Guid>> {
-    private readonly IConfiguration _configuration;
 
     /// <summary>
     /// Users table
@@ -28,9 +27,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     /// </summary>
     public new DbSet<UserState> UserStates { get; set; }
 
-    /// <inheritdoc />
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration) : base(options) {
-        _configuration = configuration;
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
     }
 
     /// <inheritdoc />
@@ -38,10 +35,5 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
         base.OnModelCreating(builder);
         builder.Entity<User>().HasOne(u => u.UserGroup).WithMany(g => g.Users);
         builder.Entity<User>().HasOne(u => u.UserState).WithMany(g => g.Users);
-    }
-
-    /// <inheritdoc />
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-        optionsBuilder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection"));
     }
 }

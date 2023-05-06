@@ -39,7 +39,7 @@ public class UserController : ControllerBase {
     /// <returns></returns>
     [HttpGet]
     [Route("users")]
-    public async Task<ActionResult<Pagination<UserDto>>> GetAllUsers([FromQuery] int page) {
+    public async Task<ActionResult<Pagination<UserDto>>> GetAllUsers([FromQuery] int page = 1) {
         return Ok(await _userService.GetAllUsers(page));
     }
     

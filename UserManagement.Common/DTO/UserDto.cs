@@ -15,12 +15,12 @@ public class UserDto {
     /// Email
     /// </summary>
     [DisplayName("email")]
-    public required string Email { get; set; }
+    public string? Email { get; set; }
     /// <summary>
     /// User nickname/login
     /// </summary>
     [DisplayName("login")]
-    public required string UserName { get; set; }
+    public string? UserName { get; set; }
     /// <summary>
     /// Creation date
     /// </summary>

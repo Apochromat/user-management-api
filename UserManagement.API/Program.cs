@@ -37,5 +37,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseErrorHandleMiddleware();
+await app.ConfigureGroupsStatesAsync();
 
 app.Run();

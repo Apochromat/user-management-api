@@ -6,7 +6,7 @@ using UserManagement.Common.Interfaces;
 using UserManagement.DAL;
 using UserManagement.DAL.Entities;
 
-namespace UnitTests; 
+namespace UserManagement.UnitTests; 
 
 public class Startup {
     public void ConfigureServices(IServiceCollection services)

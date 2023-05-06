@@ -5,7 +5,7 @@ using UserManagement.Common.Interfaces;
 using UserManagement.DAL;
 using UserManagement.DAL.Entities;
 
-namespace UnitTests;
+namespace UserManagement.UnitTests;
 
 public abstract class TestsBase : IDisposable {
     protected TestsBase(IUserService userService, ApplicationDbContext context) {

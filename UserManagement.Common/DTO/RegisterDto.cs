@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using UserManagement.Common.Enumerations;
 
 namespace UserManagement.Common.DTO; 
 
@@ -8,18 +10,10 @@ namespace UserManagement.Common.DTO;
 /// </summary>
 public class RegisterDto {
     /// <summary>
-    /// User email
-    /// </summary>
-    [Required]
-    [EmailAddress]
-    [DisplayName("email")]
-    public required string Email { get; set; }
-    
-    /// <summary>
     /// User nickname/login
     /// </summary>
     [Required]
-    [DisplayName("login")]
+    [JsonPropertyName("login")]
     public required string UserName { get; set; }
     
     /// <summary>
@@ -28,6 +22,13 @@ public class RegisterDto {
     [Required]
     [StringLength(64, MinimumLength = 8)]
     [DefaultValue("P@ssw0rd")]
-    [DisplayName("password")]
+    [JsonPropertyName("password")]
     public required string Password { get; set; }
+    
+    /// <summary>
+    /// Group code
+    /// </summary>
+    [Required]
+    [JsonPropertyName("group_code")]
+    public GroupCode GroupCode { get; set; }
 }

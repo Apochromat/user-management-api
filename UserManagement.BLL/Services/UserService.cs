@@ -15,15 +15,18 @@ namespace UserManagement.BLL.Services;
 public class UserService : IUserService {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="context"></param>
     /// <param name="userManager"></param>
-    public UserService(ApplicationDbContext context, UserManager<User> userManager) {
+    /// <param name="signInManager"></param>
+    public UserService(ApplicationDbContext context, UserManager<User> userManager, SignInManager<User> signInManager) {
         _context = context;
         _userManager = userManager;
+        _signInManager = signInManager;
     }
 
     /// <summary>
@@ -35,18 +38,26 @@ public class UserService : IUserService {
         if (userGroup == null) {
             throw new InvalidOperationException("User group not found");
         }
+        var adminGroup = await _context.UserGroups.FirstOrDefaultAsync(g => g.Code == GroupCode.Admin);
+        if (adminGroup == null) {
+            throw new InvalidOperationException("User group not found");
+        }
+        
+        if (registerDto.GroupCode == GroupCode.Admin && 
+            await _context.Users.AnyAsync(u => u.UserGroup.Code == GroupCode.Admin && 
+                                               u.UserState.Code == StateCode.Active)) {
+            throw new ConflictException("Admin already exists");
+        }
+        
         var activeState = await _context.UserStates.FirstOrDefaultAsync(s => s.Code == StateCode.Active);
         if (activeState == null) {
             throw new InvalidOperationException("Active state not found");
         }
-        
-        // TODO: check that only one user can be in admin group
-        
+
         var user = new User() {
             Id = Guid.NewGuid(),
-            Email = registerDto.Email,
             UserName = registerDto.UserName,
-            UserGroup = userGroup,
+            UserGroup = registerDto.GroupCode == GroupCode.Admin ? adminGroup : userGroup,
             UserState = activeState
         };
         
@@ -74,7 +85,6 @@ public class UserService : IUserService {
         
         return new UserDto() {
             Id = user.Id,
-            Email = user.Email,
             UserName = user.UserName,
             Group = new UserGroupDto() {
                 Id = user.UserGroup.Id,
@@ -117,7 +127,6 @@ public class UserService : IUserService {
         var paginationUserDto = new Pagination<UserDto>() {
             Items = users.Select(u => new UserDto() {
                 Id = u.Id,
-                Email = u.Email,
                 UserName = u.UserName,
                 Group = new UserGroupDto() {
                     Id = u.UserGroup.Id,
@@ -163,5 +172,23 @@ public class UserService : IUserService {
         }
         user.UserState = blockedState;
         await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Login a user
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="password"></param>
+    /// <returns></returns>
+    public async Task<Guid?> Login(string username, string password) {
+        var user = await _userManager.FindByNameAsync(username);
+        if (user == null) {
+            return null;
+        }
+        var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+        if (!result.Succeeded) {
+            return null;
+        }
+        return user.Id;
     }
 }

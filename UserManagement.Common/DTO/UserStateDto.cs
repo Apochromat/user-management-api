@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using System.Text.Json.Serialization;
 using UserManagement.Common.Enumerations;
 
 namespace UserManagement.Common.DTO;
@@ -10,18 +10,18 @@ public class UserStateDto {
     /// <summary>
     /// Identifier
     /// </summary>
-    [DisplayName("id")]
+    [JsonPropertyName("id")]
     public Guid Id { get; set; }
 
     /// <summary>
     /// State code
     /// </summary>
-    [DisplayName("code")]
+    [JsonPropertyName("code")]
     public StateCode Code { get; set; }
 
     /// <summary>
     /// State description
     /// </summary>
-    [DisplayName("description")]
+    [JsonPropertyName("description")]
     public String? Description { get; set; }
 }

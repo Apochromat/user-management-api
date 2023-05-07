@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using System.Text.Json.Serialization;
 using UserManagement.Common.Enumerations;
 
 namespace UserManagement.Common.DTO;
@@ -10,18 +10,18 @@ public class UserGroupDto {
     /// <summary>
     /// Identifier
     /// </summary>
-    [DisplayName("id")]
+    [JsonPropertyName("id")]
     public Guid Id { get; set; }
 
     /// <summary>
     /// Group code
     /// </summary>
-    [DisplayName("code")]
+    [JsonPropertyName("code")]
     public GroupCode Code { get; set; }
 
     /// <summary>
     /// Group description
     /// </summary>
-    [DisplayName("description")]
+    [JsonPropertyName("description")]
     public String? Description { get; set; }
 }

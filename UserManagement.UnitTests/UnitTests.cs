@@ -77,7 +77,6 @@ public class UnitTests : TestsBase {
 
         // Act
         await UserService.Register(new RegisterDto() {
-            Email = "user@mail.com",
             UserName = "username",
             Password = "P@ssw0rd",
         });
@@ -92,7 +91,6 @@ public class UnitTests : TestsBase {
         // Arrange
         await InitDatabase();
         await UserService.Register(new RegisterDto() {
-            Email = "user@mail.com",
             UserName = "username",
             Password = "P@ssw0rd",
         });
@@ -109,7 +107,6 @@ public class UnitTests : TestsBase {
         // Arrange
         await InitDatabase();
         await UserService.Register(new RegisterDto() {
-            Email = "user@mail.com",
             UserName = "username",
             Password = "P@ssw0rd",
         });

@@ -18,7 +18,6 @@ public interface IUserService {
     /// <param name="id"></param>
     /// <returns></returns>
     Task<UserDto> GetUser(Guid id);
-
     /// <summary>
     /// Gets a couple users with pagination
     /// </summary>
@@ -32,4 +31,12 @@ public interface IUserService {
     /// <param name="id"></param>
     /// <returns></returns>
     Task DeleteUser(Guid id);
+    /// <summary>
+    /// Logs in a user
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="password"></param>
+    /// <param name="userIdentifier"></param>
+    /// <returns></returns>
+    Task<Guid?> Login(string username, string password);
 }

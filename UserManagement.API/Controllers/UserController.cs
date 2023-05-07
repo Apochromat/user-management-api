@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Common.DTO;
 using UserManagement.Common.Interfaces;
@@ -17,6 +18,7 @@ public class UserController : ControllerBase {
     /// Constructor
     /// </summary>
     /// <param name="logger"></param>
+    /// <param name="userService"></param>
     public UserController(ILogger<UserController> logger, IUserService userService) {
         _logger = logger;
         _userService = userService;
@@ -39,8 +41,8 @@ public class UserController : ControllerBase {
     /// <returns></returns>
     [HttpGet]
     [Route("users")]
-    public async Task<ActionResult<Pagination<UserDto>>> GetAllUsers([FromQuery] int page = 1) {
-        return Ok(await _userService.GetAllUsers(page));
+    public async Task<ActionResult<Pagination<UserDto>>> GetAllUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10) {
+        return Ok(await _userService.GetAllUsers(page, pageSize));
     }
     
     /// <summary>
@@ -49,8 +51,20 @@ public class UserController : ControllerBase {
     /// <returns></returns>
     [HttpGet]
     [Route("user/{id}")]
-    public async Task<ActionResult<UserDto>> GetUser([FromRoute] Guid id) {
+    public async Task<ActionResult<UserDto>> GetUserById([FromRoute] Guid id) {
         return Ok(await _userService.GetUser(id));
+    }
+    
+    /// <summary>
+    /// [Authorize] Returns an authenticated user
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Authorize(AuthenticationSchemes = "Basic")]
+    [Route("user/me")]
+    public async Task<ActionResult<UserDto>> GetUser() {
+        if (User.Identity?.Name == null) return Unauthorized();
+        return Ok(await _userService.GetUser(Guid.Parse(User.Identity.Name)));
     }
 
     /// <summary>

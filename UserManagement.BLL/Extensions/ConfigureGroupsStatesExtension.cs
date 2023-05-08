@@ -28,7 +28,7 @@ public static class ConfigureGroupsStatesExtension {
         
         // Create groups
         foreach (var groupCode in Enum.GetValues(typeof(GroupCode)).Cast<GroupCode>()) {
-            if (context.UserGroups.Count(g => g.Code == groupCode) == 0) {
+            if (await context.UserGroups.CountAsync(g => g.Code == groupCode) == 0) {
                 await context.UserGroups.AddAsync(new UserGroup() {
                     Id = Guid.NewGuid(),
                     Code = groupCode,
@@ -39,7 +39,7 @@ public static class ConfigureGroupsStatesExtension {
 
         // Create states
         foreach (var stateCode in Enum.GetValues(typeof(StateCode)).Cast<StateCode>()) {
-            if (context.UserStates.Count(s => s.Code == stateCode) == 0) {
+            if (await context.UserStates.CountAsync(s => s.Code == stateCode) == 0) {
                 await context.UserStates.AddAsync(new UserState() {
                     Id = Guid.NewGuid(),
                     Code = stateCode,

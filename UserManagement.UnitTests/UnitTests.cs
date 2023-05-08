@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using UserManagement.Common.DTO;
 using UserManagement.Common.Enumerations;
 using UserManagement.Common.Exceptions;
@@ -17,7 +18,7 @@ public abstract class TestsBase : IDisposable {
     
     protected async Task InitDatabase() {
         foreach (var groupCode in Enum.GetValues(typeof(GroupCode)).Cast<GroupCode>()) {
-            if (Context.UserGroups.Count(g => g.Code == groupCode) == 0) {
+            if (await Context.UserGroups.CountAsync(g => g.Code == groupCode) == 0) {
                 await Context.UserGroups.AddAsync(new UserGroup() {
                     Id = Guid.NewGuid(),
                     Code = groupCode,
@@ -26,7 +27,7 @@ public abstract class TestsBase : IDisposable {
             }
         }
         foreach (var stateCode in Enum.GetValues(typeof(StateCode)).Cast<StateCode>()) {
-            if (Context.UserStates.Count(g => g.Code == stateCode) == 0) {
+            if (await Context.UserStates.CountAsync(g => g.Code == stateCode) == 0) {
                 await Context.UserStates.AddAsync(new UserState() {
                     Id = Guid.NewGuid(),
                     Code = stateCode,
@@ -52,7 +53,7 @@ public class UnitTests : TestsBase {
         await InitDatabase();
 
         // Act
-        var groupAmount = Context.UserGroups.Count();
+        var groupAmount = await Context.UserGroups.CountAsync();
 
         // Assert
         Assert.Equal(2, groupAmount);
@@ -64,7 +65,7 @@ public class UnitTests : TestsBase {
         await InitDatabase();
 
         // Act
-        var groupAmount = Context.UserStates.Count();
+        var groupAmount = await Context.UserStates.CountAsync();
 
         // Assert
         Assert.Equal(2, groupAmount);
@@ -81,7 +82,7 @@ public class UnitTests : TestsBase {
             Password = "P@ssw0rd",
             GroupCode = GroupCode.User
         });
-        var userAmount = Context.Users.Count();
+        var userAmount = await Context.Users.CountAsync();
 
         // Assert
         Assert.Equal(1, userAmount);

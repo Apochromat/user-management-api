@@ -121,7 +121,7 @@ public class UserService : IUserService {
             throw new BadRequestException("Invalid page size");
         }
         
-        var usersAmount = _context.Users.Count();
+        var usersAmount = await _context.Users.CountAsync();
         var pagesAmount = Math.Ceiling((decimal)usersAmount / pageSize);
         if (pagesAmount < page) {
             throw new NotFoundException("Page not found");

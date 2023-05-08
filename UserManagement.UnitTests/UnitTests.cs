@@ -71,7 +71,7 @@ public class UnitTests : TestsBase {
     }
     
     [Fact]
-    public async Task Test_UserRegistration_UserCreatedInDb() {
+    public async Task Test_UserRegistrationWithCorrectCredentials_UserCreatedInDb() {
         // Arrange
         await InitDatabase();
 
@@ -79,6 +79,7 @@ public class UnitTests : TestsBase {
         await UserService.Register(new RegisterDto() {
             UserName = "username",
             Password = "P@ssw0rd",
+            GroupCode = GroupCode.User
         });
         var userAmount = Context.Users.Count();
 
@@ -93,6 +94,7 @@ public class UnitTests : TestsBase {
         await UserService.Register(new RegisterDto() {
             UserName = "username",
             Password = "P@ssw0rd",
+            GroupCode = GroupCode.User
         });
 
         // Act
@@ -109,6 +111,7 @@ public class UnitTests : TestsBase {
         await UserService.Register(new RegisterDto() {
             UserName = "username",
             Password = "P@ssw0rd",
+            GroupCode = GroupCode.User
         });
         var id = (await UserService.GetAllUsers(1)).Items.First().Id;
 
@@ -128,6 +131,106 @@ public class UnitTests : TestsBase {
 
         // Assert
         await Assert.ThrowsAsync<NotFoundException>(async () => await UserService.GetUser(Guid.NewGuid()));
+    }
+    
+    [Fact]
+    public async Task Test_UserRegistrationWithIncorrectPasswordLength_ThrowException() {
+        // Arrange
+        await InitDatabase();
+
+        // Act
+
+        // Assert
+        await Assert.ThrowsAsync<BadRequestException>(async () => await UserService.Register(new RegisterDto() {
+            UserName = "username",
+            Password = "Q1@rt",
+            GroupCode = GroupCode.User
+        }));
+    }
+    
+    [Fact]
+    public async Task Test_UserRegistrationWithoutDigitInPassword_ThrowException() {
+        // Arrange
+        await InitDatabase();
+
+        // Act
+
+        // Assert
+        await Assert.ThrowsAsync<BadRequestException>(async () => await UserService.Register(new RegisterDto() {
+            UserName = "username",
+            Password = "Qw@rtyqwerty",
+            GroupCode = GroupCode.User
+        }));
+    }
+    
+    [Fact]
+    public async Task Test_UserRegistrationWithoutUppercaseLetterInPassword_ThrowException() {
+        // Arrange
+        await InitDatabase();
+
+        // Act
+
+        // Assert
+        await Assert.ThrowsAsync<BadRequestException>(async () => await UserService.Register(new RegisterDto() {
+            UserName = "username",
+            Password = "1w@rtyqwerty",
+            GroupCode = GroupCode.User
+        }));
+    }
+    
+    [Fact]
+    public async Task Test_UserRegistrationWithoutSymbolInPassword_ThrowException() {
+        // Arrange
+        await InitDatabase();
+
+        // Act
+
+        // Assert
+        await Assert.ThrowsAsync<BadRequestException>(async () => await UserService.Register(new RegisterDto() {
+            UserName = "username",
+            Password = "Qw0rtyqwerty",
+            GroupCode = GroupCode.User
+        }));
+    }
+    
+    [Fact]
+    public async Task Test_UserRegistrationWithExistingUsername_ThrowException() {
+        // Arrange
+        await InitDatabase();
+        await UserService.Register(new RegisterDto() {
+            UserName = "username",
+            Password = "P@ssw0rd",
+            GroupCode = GroupCode.User
+        });
+
+        // Act
+
+        // Assert
+        await Assert.ThrowsAsync<ConflictException>(async () => await UserService.Register(new RegisterDto() {
+            UserName = "username",
+            Password = "P@ssw0rd",
+            GroupCode = GroupCode.User
+        }));
+    }
+    
+    [Fact]
+    public async Task Test_UserRegistrationWithExistingAdminUser_ThrowException() {
+        // Arrange
+        await InitDatabase();
+        await UserService.Register(new RegisterDto() {
+            UserName = "username",
+            Password = "P@ssw0rd",
+            GroupCode = GroupCode.Admin
+        });
+
+        // Act
+
+        // Assert
+        await Assert.ThrowsAsync<ConflictException>(async () => await UserService.Register(new RegisterDto() {
+            UserName = "adminName",
+            Password = "P@ssw0rd",
+            GroupCode = GroupCode.Admin
+        }));
     }
 
     public UnitTests(IUserService userService, ApplicationDbContext context) : base(userService, context) {

@@ -36,7 +36,6 @@ public interface IUserService {
     /// </summary>
     /// <param name="username"></param>
     /// <param name="password"></param>
-    /// <param name="userIdentifier"></param>
     /// <returns></returns>
     Task<Guid?> Login(string username, string password);
 }

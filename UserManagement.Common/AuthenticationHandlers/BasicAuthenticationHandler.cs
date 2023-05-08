@@ -33,9 +33,9 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
     /// </summary>
     /// <returns></returns>
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync() {
-        Guid? userIdentifier = null;
         try {
             var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
+            if (authHeader == null || authHeader.Parameter == null) throw new ArgumentException("Invalid header");
             var credentials = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader.Parameter)).Split(':');
             var username = credentials.FirstOrDefault();
             var password = credentials.LastOrDefault();
@@ -43,21 +43,22 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 throw new ArgumentException("Invalid credentials");
 
-            userIdentifier = await _userService.Login(username, password);
-            if (userIdentifier == null)
-                throw new ArgumentException("Invalid credentials");
+            var userIdentifier = await _userService.Login(username, password);
+            var userIdentifierString = userIdentifier.ToString();
+            if (userIdentifierString == null) throw new ArgumentException("Invalid credentials");
+            
+            
+            var claims = new[] {
+                new Claim(ClaimTypes.Name, userIdentifierString)
+            };
+            var identity = new ClaimsIdentity(claims, Scheme.Name);
+            var principal = new ClaimsPrincipal(identity);
+            var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
+            return AuthenticateResult.Success(ticket);
         }
         catch (Exception ex) {
             return AuthenticateResult.Fail($"Authentication failed: {ex.Message}");
         }
-
-        var claims = new[] {
-            new Claim(ClaimTypes.Name, userIdentifier.ToString())
-        };
-        var identity = new ClaimsIdentity(claims, Scheme.Name);
-        var principal = new ClaimsPrincipal(identity);
-        var ticket = new AuthenticationTicket(principal, Scheme.Name);
-
-        return AuthenticateResult.Success(ticket);
     }
 }

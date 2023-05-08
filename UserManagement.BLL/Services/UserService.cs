@@ -49,6 +49,10 @@ public class UserService : IUserService {
             throw new ConflictException("Admin already exists");
         }
         
+        if (await _context.Users.AnyAsync(u => u.UserName == registerDto.UserName)) {
+            throw new ConflictException("User with login already exists");
+        }
+        
         var activeState = await _context.UserStates.FirstOrDefaultAsync(s => s.Code == StateCode.Active);
         if (activeState == null) {
             throw new InvalidOperationException("Active state not found");
@@ -63,9 +67,12 @@ public class UserService : IUserService {
         
         var result = await _userManager.CreateAsync(user, registerDto.Password);
         if (!result.Succeeded) {
-            throw new ConflictException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            throw new BadRequestException(string.Join(", ", result.Errors.Select(e => e.Description)));
         }
         await _context.SaveChangesAsync();
+        
+        // If you really need delay
+        // Thread.Sleep(5000);
     }
 
     /// <summary>
@@ -110,6 +117,10 @@ public class UserService : IUserService {
         if (page < 1) {
             throw new BadRequestException("Invalid page number");
         }
+        if (pageSize < 1) {
+            throw new BadRequestException("Invalid page size");
+        }
+        
         var usersAmount = _context.Users.Count();
         var pagesAmount = Math.Ceiling((decimal)usersAmount / pageSize);
         if (pagesAmount < page) {
@@ -183,6 +194,9 @@ public class UserService : IUserService {
     public async Task<Guid?> Login(string username, string password) {
         var user = await _userManager.FindByNameAsync(username);
         if (user == null) {
+            return null;
+        }
+        if (user.UserState.Code == StateCode.Blocked) {
             return null;
         }
         var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using UserManagement.DAL.Entities;
 
 namespace UserManagement.DAL;
@@ -18,14 +17,14 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public new DbSet<User> Users { get; set; }
 
     /// <summary>
-    /// Users table
+    /// User groups table
     /// </summary>
-    public new DbSet<UserGroup> UserGroups { get; set; }
+    public DbSet<UserGroup> UserGroups { get; set; }
 
     /// <summary>
-    /// Users table
+    /// User states table
     /// </summary>
-    public new DbSet<UserState> UserStates { get; set; }
+    public DbSet<UserState> UserStates { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
     }

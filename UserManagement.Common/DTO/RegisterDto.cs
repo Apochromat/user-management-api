@@ -20,7 +20,7 @@ public class RegisterDto {
     /// User password
     /// </summary>
     [Required]
-    [StringLength(64, MinimumLength = 8)]
+    [MinLength(6)]
     [DefaultValue("P@ssw0rd")]
     [JsonPropertyName("password")]
     public required string Password { get; set; }
